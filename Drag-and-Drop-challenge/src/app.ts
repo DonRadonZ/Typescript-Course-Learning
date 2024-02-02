@@ -69,6 +69,7 @@ class WorkList{
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     element: HTMLElement;
+    assignedWorks: any[]
     // title: string;
     // description: string;
     // people: number;
@@ -76,20 +77,84 @@ class WorkList{
     constructor(private type: 'active' | 'finished') {
         this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
         this.hostElement = <HTMLDivElement>document.getElementById('app')!;
+        this.assignedWorks = [];
 
         const importedNode = document.importNode(
             this.templateElement.content,
             true);
         
         this.element = <HTMLElement>importedNode.firstElementChild
-        this.element.id = `${type}-projects`;
+        this.element.id = `${this.type}-projects`;
 
+        workState.addListener((works: any[]) => {
+            this.assignedWorks = works;
+            this.renderWorks();
+        });
+
+        this.attach();
+        this.renderContent();
+    }
+
+    private renderWorks() {
+        const listEl = <HTMLUListElement>document.getElementById(`${this.type}-projects-list`);
+        for (const wkItem of this.assignedWorks) { 
+            const listItem = document.createElement('li');
+            listItem.textContent = wkItem.title;
+            listEl.appendChild(listItem)
+        }
+    }
+
+    
+
+    private renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.element.querySelector('ul')!.id = listId;
+        this.element.querySelector('h2')!.textContent =
+            this.type.toUpperCase() + ' PROJECTS';
+        
     }
 
     private attach() {
-        this.hostElement.insertAdjacentElement('afterbegin', this.element)
+        this.hostElement.insertAdjacentElement('beforeend', this.element)
     }
 }
+
+// Work State Management
+class WorkState {
+    private listeners: any[] = [];
+    private works: any[] = [];  
+    private static instance: WorkState;
+
+    private constructor() {
+
+    }
+
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new WorkState();
+        return this.instance;
+    }
+    
+    addListener(listenerFn: Function) {
+        this.listeners.push(listenerFn);
+    }
+    addWork(title: string, description: string, numOfPeople: number) {
+        const newWork = {
+            id: Math.random().toString(),
+            title: title,
+            description: description,
+            people: numOfPeople
+        };
+        this.works.push(newWork);
+        for (const listenerFn of this.listeners) {
+          listenerFn(this.works.slice());
+        }
+    }
+}
+
+const workState = WorkState.getInstance(); 
 
 // Input Class
 class WorkInput {
@@ -119,7 +184,6 @@ class WorkInput {
         this.configure();
         this.attach();
     }
-
     
     private getUserInput(): [string, string, number] | void {
         const enteredTitle = this.titleInputElement.value;
@@ -165,7 +229,7 @@ class WorkInput {
         const userInput = this.getUserInput();
         if (Array.isArray(userInput)) { 
             const [title, desc, people] = userInput;
-            console.log(title, desc, people);
+            workState.addWork(title, desc, people)
             this.clearInputs();
         }
     }
@@ -178,4 +242,7 @@ class WorkInput {
 }
 
 const WkInput = new WorkInput();
+
+const activeWkList = new WorkList('active');
+const finishedWkList = new WorkList('finished');
 
