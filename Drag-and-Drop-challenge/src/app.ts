@@ -84,7 +84,13 @@ class WorkList{
         this.element.id = `${this.type}-projects`;
 
         workState.addListener((works: Works[]) => {
-            this.assignedWorks = works;
+            const relevantWorks = works.filter(wk => {
+                if (this.type === 'active') {
+                    return wk.status === WorkStatus.Active;
+                }
+                return wk.status === WorkStatus.Finished;
+            });
+            this.assignedWorks = relevantWorks;
             this.renderWorks();
         });
 
@@ -94,10 +100,11 @@ class WorkList{
 
     private renderWorks() {
         const listEl = <HTMLUListElement>document.getElementById(`${this.type}-projects-list`);
+        listEl.innerHTML = '';
         for (const wkItem of this.assignedWorks) { 
             const listItem = document.createElement('li');
             listItem.textContent = wkItem.title;
-            listEl.appendChild(listItem)
+            listEl.appendChild(listItem);
         }
     }
 
