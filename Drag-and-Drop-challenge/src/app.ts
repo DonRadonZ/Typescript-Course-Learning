@@ -64,6 +64,33 @@ function PositiveNumber(target: any, propName: string) {
         }
     }
 
+// Information class
+class WorkList{
+    templateElement: HTMLTemplateElement;
+    hostElement: HTMLDivElement;
+    element: HTMLElement;
+    // title: string;
+    // description: string;
+    // people: number;
+
+    constructor(private type: 'active' | 'finished') {
+        this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
+        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
+
+        const importedNode = document.importNode(
+            this.templateElement.content,
+            true);
+        
+        this.element = <HTMLElement>importedNode.firstElementChild
+        this.element.id = `${type}-projects`;
+
+    }
+
+    private attach() {
+        this.hostElement.insertAdjacentElement('afterbegin', this.element)
+    }
+}
+
 // Input Class
 class WorkInput {
     templateElement: HTMLTemplateElement;
