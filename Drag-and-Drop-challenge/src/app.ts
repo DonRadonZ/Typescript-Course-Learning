@@ -69,10 +69,7 @@ class WorkList{
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     element: HTMLElement;
-    assignedWorks: any[]
-    // title: string;
-    // description: string;
-    // people: number;
+    assignedWorks: Works[]
 
     constructor(private type: 'active' | 'finished') {
         this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
@@ -86,7 +83,7 @@ class WorkList{
         this.element = <HTMLElement>importedNode.firstElementChild
         this.element.id = `${this.type}-projects`;
 
-        workState.addListener((works: any[]) => {
+        workState.addListener((works: Works[]) => {
             this.assignedWorks = works;
             this.renderWorks();
         });
@@ -119,10 +116,24 @@ class WorkList{
     }
 }
 
+// Work Type
+
+enum WorkStatus {Active, Finished}
+class Works{
+    constructor(
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
+        public status: WorkStatus
+    ) { }
+}
+
 // Work State Management
+type Listener = (items: Works[]) => void;
 class WorkState {
-    private listeners: any[] = [];
-    private works: any[] = [];  
+    private listeners: Listener[] = [];
+    private works: Works[] = [];  
     private static instance: WorkState;
 
     private constructor() {
@@ -137,16 +148,17 @@ class WorkState {
         return this.instance;
     }
     
-    addListener(listenerFn: Function) {
+    addListener(listenerFn: Listener) {
         this.listeners.push(listenerFn);
     }
     addWork(title: string, description: string, numOfPeople: number) {
-        const newWork = {
-            id: Math.random().toString(),
-            title: title,
-            description: description,
-            people: numOfPeople
-        };
+        const newWork = new Works(
+            Math.random().toString(),
+            title,
+            description,
+            numOfPeople,
+            WorkStatus.Active
+        );
         this.works.push(newWork);
         for (const listenerFn of this.listeners) {
           listenerFn(this.works.slice());
