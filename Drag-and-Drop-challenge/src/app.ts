@@ -36,7 +36,7 @@ function validation(ValidationInput: Validatable) {
     }
      if (ValidationInput.maxlength != null &&
         typeof ValidationInput.value === 'string') {
-        isValid = isValid && ValidationInput.value.length >= ValidationInput.maxlength;
+        isValid = isValid && ValidationInput.value.length <= ValidationInput.maxlength;
     }
      if (ValidationInput.minlength != null &&
         typeof ValidationInput.value === 'number') {
@@ -44,7 +44,7 @@ function validation(ValidationInput: Validatable) {
     }
      if (ValidationInput.maxlength != null &&
         typeof ValidationInput.value === 'number') {
-        isValid = isValid && ValidationInput.value >= ValidationInput.maxlength;
+        isValid = isValid && ValidationInput.value <= ValidationInput.maxlength;
     }
     return isValid
 }
@@ -99,9 +99,25 @@ class WorkInput {
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
 
-        if (enteredTitle.trim().length === 0 ||
-            enteredDescription.trim().length === 0 ||
-            enteredPeople.trim().length === 0
+        const titleValidation: Validatable = {
+            value: enteredTitle,
+            required: true
+        }
+        const descriptorValidation: Validatable = {
+            value: enteredDescription,
+            required: true,
+            minlength: 5
+        }
+        const peopleValidation: Validatable = {
+            value: +enteredPeople,
+            required: true,
+            min: 1,
+            max: 100
+        }
+
+        if (!validation(titleValidation) ||
+            !validation(descriptorValidation) ||
+            !validation(peopleValidation) 
         ) { 
             alert('Please input information!');
             return;
