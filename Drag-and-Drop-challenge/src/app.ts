@@ -65,6 +65,20 @@ class WorkState extends State<Work> {
           listenerFn(this.works.slice());
         }
     }
+
+    moveWork(workId: string, newStatus: WorkStatus) {
+        const work = this.works.find(wk => wk.id === workId);
+        if (work && work.status !== newStatus) {
+            work.status = newStatus;
+            this.updateListeners();
+        }
+    }
+
+    private updateListeners() {
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.works.slice());
+        }
+    }
 }
 
 const workState = WorkState.getInstance(); 
@@ -176,7 +190,8 @@ class WorkItem extends Component<HTMLUListElement, HTMLLIElement>
     
     @Autobind
     dragStartHandler(event: DragEvent) {
-        console.log(event);  
+        event.dataTransfer!.setData('text/plain', this.work.id); 
+        event.dataTransfer!.effectAllowed = 'move'; 
     }
     dragEndHandler(_: DragEvent) {
         console.log('DragEnd');
@@ -208,16 +223,20 @@ class WorkList extends Component<HTMLDivElement, HTMLElement> implements
     }
 
     @Autobind
-    dragOverHandler(_: DragEvent) {
-        const listEl = this.element.querySelector('ul')!;
-        listEl.classList.add('droppable');
+    dragOverHandler(event: DragEvent) {
+        if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+            event.preventDefault();
+           const listEl = this.element.querySelector('ul')!;
+        listEl.classList.add('droppable'); 
+        }
     }
 
-    dropHandler(_: DragEvent) {
-        
-
+    dropHandler(event: DragEvent) {
+        const wkId = event.dataTransfer!.getData('text/plain');
+        workState.moveWork(wkId, this.type === 'active' ? WorkStatus.Active : WorkStatus.Finished)
     }
 
+    @Autobind
     dragLeaveHandler(_: DragEvent) {
         const listEl = this.element.querySelector('ul')!;
         listEl.classList.remove('droppable');
