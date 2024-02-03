@@ -64,25 +64,54 @@ function PositiveNumber(target: any, propName: string) {
         }
     }
 
-// Information class
-class WorkList{
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    element: HTMLElement;
-    assignedWorks: Works[]
+    hostElement: T;
+    element: U;
+    constructor(
+        templateId: string,
+        hostElementId: string,
+        insertAtStart: boolean,
+        newElementId?: string
+    ) {
+        this.templateElement = <HTMLTemplateElement>document.getElementById(
+            templateId
+        )!;
+        this.hostElement = <T>document.getElementById(hostElementId)!;
 
-    constructor(private type: 'active' | 'finished') {
-        this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
-        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
-        this.assignedWorks = [];
-
-        const importedNode = document.importNode(
+         const importedNode = document.importNode(
             this.templateElement.content,
             true);
         
-        this.element = <HTMLElement>importedNode.firstElementChild
-        this.element.id = `${this.type}-projects`;
+        this.element = <U>importedNode.firstElementChild;
+        if (newElementId) {
+            this.element.id = newElementId;
+        }
+        this.attach(insertAtStart);
+    }
+    private attach(insertAtBeginning: boolean) {
+        this.hostElement.insertAdjacentElement(insertAtBeginning ? 'afterbegin' : 'beforeend', this.element
+        );
+    }
 
+    abstract configure?(): void;
+    abstract renderContent(): void;
+
+}
+
+// Information class
+class WorkList extends Component<HTMLDivElement, HTMLElement>{
+    assignedWorks: Works[]
+
+    constructor(private type: 'active' | 'finished') {
+        super('project-list','app', false, `${type}-projects`);
+        this.assignedWorks = [];
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure() {
         workState.addListener((works: Works[]) => {
             const relevantWorks = works.filter(wk => {
                 if (this.type === 'active') {
@@ -93,9 +122,14 @@ class WorkList{
             this.assignedWorks = relevantWorks;
             this.renderWorks();
         });
+    }
 
-        this.attach();
-        this.renderContent();
+    renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.element.querySelector('ul')!.id = listId;
+        this.element.querySelector('h2')!.textContent =
+            this.type.toUpperCase() + ' PROJECTS';
+        
     }
 
     private renderWorks() {
@@ -108,19 +142,8 @@ class WorkList{
         }
     }
 
-    
 
-    private renderContent() {
-        const listId = `${this.type}-projects-list`;
-        this.element.querySelector('ul')!.id = listId;
-        this.element.querySelector('h2')!.textContent =
-            this.type.toUpperCase() + ' PROJECTS';
-        
-    }
 
-    private attach() {
-        this.hostElement.insertAdjacentElement('beforeend', this.element)
-    }
 }
 
 // Work Type
@@ -137,14 +160,22 @@ class Works{
 }
 
 // Work State Management
-type Listener = (items: Works[]) => void;
-class WorkState {
-    private listeners: Listener[] = [];
+type Listener<T> = (items: T[]) => void;
+
+class State<T> {
+    protected listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn);
+    }
+}
+class WorkState extends State<Works> {
+    
     private works: Works[] = [];  
     private static instance: WorkState;
 
     private constructor() {
-
+        super();
     }
 
     static getInstance() {
@@ -155,9 +186,7 @@ class WorkState {
         return this.instance;
     }
     
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
-    }
+    
     addWork(title: string, description: string, numOfPeople: number) {
         const newWork = new Works(
             Math.random().toString(),
@@ -176,33 +205,30 @@ class WorkState {
 const workState = WorkState.getInstance(); 
 
 // Input Class
-class WorkInput {
-    templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    element: HTMLFormElement;
+class WorkInput extends Component<HTMLDivElement, HTMLFormElement> {
     titleInputElement: HTMLInputElement;
     descriptionInputElement: HTMLInputElement;
     peopleInputElement: HTMLInputElement;
     // submitElement: HTMLButtonElement;
 
     constructor() { 
-        this.templateElement = <HTMLTemplateElement>document.getElementById('project-input')!;
-        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
-
-        const importedNode = document.importNode(
-            this.templateElement.content,
-            true);
-        
-        this.element = <HTMLFormElement>importedNode.firstElementChild
-        this.element.id = 'user-input';
-
-        this.titleInputElement = <HTMLInputElement>this.element.querySelector('#title')
-        this.descriptionInputElement = <HTMLInputElement>this.element.querySelector('#description')
-        this.peopleInputElement = <HTMLInputElement>this.element.querySelector('#people')
-        
+        super('project-input', 'app', true, 'user-input');
+        this.titleInputElement = <HTMLInputElement>this.element.querySelector(
+            '#title'
+        )
+        this.descriptionInputElement = <HTMLInputElement>this.element.querySelector(
+            '#description'
+        )
+        this.peopleInputElement = <HTMLInputElement>this.element.querySelector(
+            '#people'
+        )
         this.configure();
-        this.attach();
     }
+    configure() {
+        this.element.addEventListener('submit', this.submitHandler.bind(this));
+    }
+
+    renderContent() {}
     
     private getUserInput(): [string, string, number] | void {
         const enteredTitle = this.titleInputElement.value;
@@ -251,12 +277,6 @@ class WorkInput {
             workState.addWork(title, desc, people)
             this.clearInputs();
         }
-    }
-    private configure() {
-        this.element.addEventListener('submit', this.submitHandler.bind(this));
-    }
-    private attach() {
-        this.hostElement.insertAdjacentElement('afterbegin', this.element)
     }
 }
 
