@@ -1,4 +1,4 @@
-import { Component } from "./base-component.js";
+import  Component  from "./base-component.js";
 import { DragTarget } from "../models/drag-drop.js";
 import { Work } from "../models/work.js";
 import { Autobind } from "../decorators/autobind.js";
