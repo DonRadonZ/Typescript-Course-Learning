@@ -1,7 +1,7 @@
-import Component  from "./base-component.js";
-import { Autobind } from "../decorators/autobind.js";
-import { Validatable, validation } from "../util/validation.js";
-import { workState } from "../state/work-state.js";
+import Component  from "./base-component";
+import { Autobind } from "../decorators/autobind";
+import { Validatable, validation } from "../util/validation";
+import { workState } from "../state/work-state";
 
     // Input Class
 export class WorkInput extends Component<HTMLDivElement, HTMLFormElement> {

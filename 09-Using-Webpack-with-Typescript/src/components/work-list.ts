@@ -1,10 +1,10 @@
-import  Component  from "./base-component.js";
-import { DragTarget } from "../models/drag-drop.js";
-import { Work } from "../models/work.js";
-import { Autobind } from "../decorators/autobind.js";
-import { workState } from "../state/work-state.js";
+import Component from "./base-component";
+import { DragTarget } from "../models/drag-drop";
+import { Work } from "../models/work";
+import { Autobind } from "../decorators/autobind";
+import { workState } from "../state/work-state";
 import { WorkItem } from "./work-item";
-import { WorkStatus } from "../models/work.js";
+import { WorkStatus } from "../models/work";
 
    // WorkList Class
 export class WorkList extends Component<HTMLDivElement, HTMLElement> implements
