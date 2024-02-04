@@ -1,5 +1,5 @@
-import { Work } from "../models/work";
-import { WorkStatus } from "../models/work";
+import { Work } from "../models/work.js";
+import { WorkStatus } from "../models/work.js";
     // Work State Management
 type Listener<T> = (items: T[]) => void;
 
