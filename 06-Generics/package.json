@@ -1,7 +1,7 @@
 {
-  "name": "06-generics",
+  "name": "typescript-course-learning",
   "version": "1.0.0",
-  "description": "",
+  "description": "Understanding TypeScript Course about Generic",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
