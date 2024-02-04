@@ -1,4 +1,4 @@
-namespace App{
+
     // Autobind Decorator
 export function Autobind(
     _: any,
@@ -15,4 +15,3 @@ export function Autobind(
     };
     return adjDescriptor;
   }
-}

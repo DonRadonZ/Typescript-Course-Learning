@@ -1,9 +1,8 @@
-/// <reference path="base-component.ts"/>
-/// <reference path="../decorators/autobind.ts"/>
-/// <reference path="../util/validation.ts"/>
-/// <reference path="../state/work-state.ts"/>
+import { Component } from "./base-component.js";
+import { Autobind } from "../decorators/autobind.js";
+import { Validatable, validation } from "../util/validation.js";
+import { workState } from "../state/work-state.js";
 
-namespace App{
     // Input Class
 export class WorkInput extends Component<HTMLDivElement, HTMLFormElement> {
     titleInputElement: HTMLInputElement;
@@ -77,5 +76,4 @@ export class WorkInput extends Component<HTMLDivElement, HTMLFormElement> {
             this.clearInputs();
         }
     }
-}
 }

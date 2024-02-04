@@ -1,10 +1,11 @@
-/// <reference path="base-component.ts"/>
-/// <reference path="../decorators/autobind.ts"/>
-/// <reference path="../state/work-state.ts"/>
-/// <reference path="../models/work.ts"/>
-/// <reference path="../models/drag-drop.ts"/>
+import { Component } from "./base-component.js";
+import { DragTarget } from "../models/drag-drop.js";
+import { Work } from "../models/work.js";
+import { Autobind } from "../decorators/autobind.js";
+import { workState } from "../state/work-state.js";
+import { WorkItem } from "./work-item";
+import { WorkStatus } from "../models/work.js";
 
-namespace App{
    // WorkList Class
 export class WorkList extends Component<HTMLDivElement, HTMLElement> implements
     DragTarget{
@@ -73,4 +74,3 @@ export class WorkList extends Component<HTMLDivElement, HTMLElement> implements
     }
 
 } 
-}

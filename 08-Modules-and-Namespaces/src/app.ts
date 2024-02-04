@@ -1,13 +1,13 @@
-/// <reference path="components/work-input.ts"/>
-/// <reference path="components/work-list.ts"/>
+import { WorkInput } from "./components/work-input";
+import { WorkList } from "./components/work-list";
 
 
 
-namespace App{
+
 new WorkInput();
 new WorkList('active');
 new WorkList('finished');
 
 
-}
+
 

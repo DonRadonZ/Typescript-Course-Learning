@@ -1,4 +1,4 @@
-namespace App{
+
     // Validator
 export interface Validatable {
     value: string | number;
@@ -30,5 +30,4 @@ export function validation(ValidationInput: Validatable) {
         isValid = isValid && ValidationInput.value <= ValidationInput.maxlength;
     }
     return isValid
-}
 }

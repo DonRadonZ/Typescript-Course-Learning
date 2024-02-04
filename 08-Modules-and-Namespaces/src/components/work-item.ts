@@ -1,9 +1,10 @@
-/// <reference path="base-component.ts"/>
-/// <reference path="../decorators/autobind.ts"/>
-/// <reference path="../models/work.ts"/>
-/// <reference path="../models/drag-drop.ts"/>
+import { Draggable } from "../models/drag-drop";
+import { Component } from "./base-component";
+import { Work } from "../models/work";
+import { Autobind } from "../decorators/autobind";
 
-namespace App{
+
+
     // WorkItem Class
 export class WorkItem extends Component<HTMLUListElement, HTMLLIElement>
     implements Draggable{
@@ -42,5 +43,4 @@ export class WorkItem extends Component<HTMLUListElement, HTMLLIElement>
         )!.textContent = this.persons + 'Person assigned';
         this.element.querySelector('p')!.textContent = this.work.description;
     }
-}
 }

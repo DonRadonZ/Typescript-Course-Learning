@@ -1,4 +1,4 @@
-namespace App{
+
     export enum WorkStatus {
       Active,
       Finished
@@ -13,4 +13,4 @@ namespace App{
         public status: WorkStatus
     ) {}
 }
-}
+

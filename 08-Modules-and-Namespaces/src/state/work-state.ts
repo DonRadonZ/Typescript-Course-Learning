@@ -1,4 +1,5 @@
-namespace App {
+import { Work } from "../models/work";
+import { WorkStatus } from "../models/work";
     // Work State Management
 type Listener<T> = (items: T[]) => void;
 
@@ -57,4 +58,3 @@ export class WorkState extends State<Work> {
 }
 
 export const workState = WorkState.getInstance(); 
-}
