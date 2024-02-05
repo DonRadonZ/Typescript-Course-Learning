@@ -1,0 +1,19 @@
+{
+  "name": "understanding-typescript",
+  "version": "1.0.0",
+  "description": "Learn about Next Generation of JS and TS in course Understanding TypeScript Course Setup",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
+  },
+  "keywords": [
+    "typescript",
+    "course"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  }
+}
